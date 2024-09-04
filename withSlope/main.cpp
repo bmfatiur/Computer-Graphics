@@ -18,51 +18,59 @@ void draw_line(){
     else
         steps=abs(dy);
 
-    float m = dy / dx;
-
-    float m_abs = abs(m);
     float x_increment, y_increment;
 
-    //case 1
-    if(m >= 0 && m <= 1 && dx >= 0 && dy >= 0){
-        x_increment = 1;
-        y_increment = m_abs;
+    if( dx != 0 ){
+        float m = dy / dx;
+
+        float m_abs = abs(m);
+
+        //case 1
+        if(m >= 0 && m <= 1 && dx >= 0 && dy >= 0){
+            x_increment = 1;
+            y_increment = m_abs;
+        }
+        //case 2
+        else if(m >= 0 && m <= 1 && dx < 0 && dy < 0){
+            x_increment = -1;
+            y_increment = -m_abs;
+        }
+        //case 3
+        else if(m >= -1 && m < 0 && dx > 0 && dy < 0){
+            x_increment = 1;
+            y_increment = -m_abs;
+        }
+        //case 4
+        else if(m >= -1 && m < 0 && dx < 0 && dy > 0){
+            x_increment = -1;
+            y_increment = m_abs;
+        }
+        //case 5
+        else if(m > 1 && dx > 0 && dy > 0){
+            x_increment = 1 / m_abs;
+            y_increment = 1;
+        }
+        //case 6
+        else if(m > 1 && dx < 0 && dy < 0){
+            x_increment = -(1 / m_abs);
+            y_increment = -1;
+        }
+        //case 7
+        else if(m < -1 && dx > 0 && dy < 0){
+            x_increment = 1 / m_abs;
+            y_increment = -1;
+        }
+        //case 8
+        else if(m < -1 && dx < 0 && dy  > 0){
+            x_increment = -(1 / m_abs);
+            y_increment = 1;
+        }
     }
-    //case 2
-    else if(m >= 0 && m <= 1 && dx < 0 && dy < 0){
-        x_increment = -1;
-        y_increment = -m_abs;
-    }
-    //case 3
-    else if(m >= -1 && m < 0 && dx > 0 && dy < 0){
-        x_increment = 1;
-        y_increment = -m_abs;
-    }
-    //case 4
-    else if(m >= -1 && m < 0 && dx < 0 && dy > 0){
-        x_increment = -1;
-        y_increment = m_abs;
-    }
-    //case 5
-    else if(m > 1 && dx > 0 && dy > 0){
-        x_increment = 1 / m_abs;
+    else{
+        x_increment = 0;
         y_increment = 1;
     }
-    //case 6
-    else if(m > 1 && dx < 0 && dy < 0){
-        x_increment = -(1 / m_abs);
-        y_increment = -1;
-    }
-    //case 7
-    else if(m < -1 && dx > 0 && dy < 0){
-        x_increment = 1 / m_abs;
-        y_increment = -1;
-    }
-    //case 8
-    else if(m < -1 && dx < 0 && dy  > 0){
-        x_increment = -(1 / m_abs);
-        y_increment = 1;
-    }
+
     glBegin(GL_POINTS);
     float x = x_0;
     float y = y_0;
