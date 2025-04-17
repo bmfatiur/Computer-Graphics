@@ -1,0 +1,120 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <thread> // Include the thread header
+#include <GL/glut.h>
+using namespace std;
+
+struct Point {
+    float x, y;
+};
+
+vector<Point> original;
+vector<Point> transformed;
+
+void drawPolygon(const std::vector<Point>& vertices) {
+    glBegin(GL_POLYGON);
+    for (const auto& vertex : vertices) {
+        glVertex2f(vertex.x, vertex.y);
+    }
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 0.0, 0.0); // Original polygon in red
+    drawPolygon(original);
+    glColor3f(0.0, 1.0, 0.0); // Transformed polygon in green
+    drawPolygon(transformed);
+    glutSwapBuffers();
+}
+
+void initialize() {
+    glClearColor(1.0, 1.0, 1.0, 1.0); // Set background color to white
+    gluOrtho2D(-100, 100, -100, 100);
+}
+
+void applyTranslation(float tx, float ty) {
+    transformed.clear();
+    for (const auto& pt : original) {
+        Point newPt;
+        newPt.x = pt.x + tx;
+        newPt.y = pt.y + ty;
+        transformed.push_back(newPt);
+    }
+    glutPostRedisplay(); // Update the display after transformation
+}
+
+void showMenu() {
+    cout << "2D Geometric Transformation" << endl;
+    cout << "........................................" << endl;
+    cout << "1 -> Translation " << endl;
+    cout << "6 -> Quit" << endl;
+    cout << "Enter your option: ";
+}
+
+void processInput(int option) {
+    switch (option) {
+        case 1: {
+            cout << "================Translation================" << endl;
+            float tx, ty;
+            cout << "Enter translation factors (tx,ty): ";
+            cin >> tx >> ty;
+            applyTranslation(tx, ty);
+            break;
+        }
+        case 6:
+            cout << "Quit" << endl;
+            exit(0);
+        default:
+            cout << "Invalid option. Please try again." << endl;
+            break;
+    }
+}
+
+void getVertices() {
+    cout << "Enter the number of vertices: ";
+    int n;
+    cin >> n;
+
+    original.resize(n);
+    cout << "Enter the coordinates of each vertex (x,y): " << endl;
+    for (int i = 0; i < n; ++i) {
+        cout << i + 1 << " -> ";
+        cin >> original[i].x >> original[i].y;
+    }
+
+    glutPostRedisplay(); // Update the display with the new polygon
+}
+
+void menuLoop() {
+    while (true) {
+        showMenu();
+        int option;
+        cin >> option;
+
+        if (option == 6) {
+            exit(0);
+        }
+
+        getVertices();
+        processInput(option);
+    }
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(600, 600);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Polygon Transformation");
+    initialize();
+    glutDisplayFunc(display);
+
+    // Start the menu loop in a separate thread
+    std::thread menuThread(menuLoop);
+    menuThread.detach();
+
+    glutMainLoop();
+    return 0;
+}
